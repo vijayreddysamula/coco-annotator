@@ -5,7 +5,7 @@ volumes:
 
 networks:
   cocoannotator:
-    external: false
+    external: true
 
 services:
   webserver:
@@ -55,3 +55,26 @@ services:
     command: "mongod --smallfiles --logpath=/dev/null"
     networks:
       - cocoannotator
+
+
+## external server
+  letsencrypt:
+        image: linuxserver/letsencrypt
+        container_name: letsencrypt
+        # network_mode: host
+        restart: always
+        ports:
+            - 8123:80
+            - 4438:443
+        volumes:
+            - ./config:/config
+        environment:
+            # Domain name
+            - URL=vijaysamula.tech
+            - TZ=America/New_York
+            - PGID=1000
+            - PUID=1000
+            # Subdomains to encrypt
+            - SUBDOMAINS=www, annotator
+        cap_add:
+            - NET_ADMIN
